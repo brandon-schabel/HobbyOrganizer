@@ -1,6 +1,5 @@
 from flask import Response, Flask, jsonify, make_response, url_for, render_template, \
     send_from_directory, request
-from wtforms import Form, BooleanField, StringField, IntegerField, PasswordField, validators
 from flask_bootstrap import Bootstrap
 from flask_bcrypt import Bcrypt
 from bson import json_util
@@ -11,58 +10,16 @@ import json
 from json import dumps
 import sys
 import os
-import configparser
+from forms import ToolLogForm, LoginForm, RegistrationForm
+from app_config import *
+from session_mongo import MongoSessionInterface, MongoSession
 
 app = Flask(__name__)
 Bootstrap(app)
 bcrypt = Bcrypt(app)
+app.session_interface = MongoSessionInterface(db=config['db_client_name'], host=config['client_url'], port=int(config['client_port']),collection=config['session_db'])
 
-
-def ConfigSectionMap(section):
-    config = configparser.ConfigParser()
-    config.read("./config.ini")
-    dict1 = {}
-    #sections are defined in config.ini and are listed as [NameHere]
-    options = config.options(section)
-    for option in options:
-        try:
-            dict1[option] = config.get(section,option)
-            if dict1[option] == -1:
-                DebugPrint("Skip: %s" % option)
-        except:
-            print("Exception on %s!" % option)
-            dict1[option] = None
-    return dict1
-
-config = ConfigSectionMap('database_config')
-
-client = MongoClient(config['client_url'], int(config['client_port']))
-# connecting to our mlab database
-db = client[config['db_client_name']]
-db.authenticate(config['db_user'], config['db_pass'])
-
-tool_db = db[config['tool_db']]
-user_db = db[config['user_db']]
-
-class ToolLogForm(Form):
-    name = StringField(u'Item Name', validators=[validators.input_required()])
-    bin_number = IntegerField(u'Bin', validators=[validators.input_required()])
-    drawer_number = IntegerField(u'Drawer', validators=[validators.input_required()])
-    comment = StringField(u'Comment', validators=[])
-    tags = StringField(u'Tags', validators=[])
-    user = StringField(u'User', validators=[])
-
-class LoginForm(Form):
-    login_email = StringField(u'Email',validators=[])
-    password = PasswordField(u'Password', validators=[])
-
-class RegistrationForm(Form):
-    login_username = StringField (u'Username', validators=[validators.input_required()])
-    login_email = StringField (u'Email', validators=[validators.input_required()])#validators.Email(), validators.EqualTo('confirm_email', message='Emails must match')
-    confirm_email = StringField(u'Repeat Email')
-    password = PasswordField(u'Password', validators=[validators.input_required()])#, validators.EqualTo('confirm_pass', message='Passwords must match')
-    confirm_pass = PasswordField(u'Repeat Password')
-    #accept_tos = BooleanField(u'I accept the TOS', [validators.DataRequired()])
+print(str(app.session_interface))
 
 @app.route('/', methods=['GET', 'POST'])
 def hello_world():
@@ -74,7 +31,7 @@ def hello_world():
         drawer_number = form.drawer_number.data
         comment = form.comment.data
         tags = form.tags.data
-        user = form.user.data
+        username = form.username.data
         current_date_time = datetime.utcnow()
         tags = tags.split(" ")
         
@@ -84,7 +41,7 @@ def hello_world():
             'drawer_number': drawer_number,
             'comment': comment,
             'tags': tags,
-            'user': user,
+            'username': username,
             'current_date_time': current_date_time
         }
 
@@ -128,7 +85,18 @@ def register():
         
     return render_template('register.html', form=form)
 
-    
+@app.route('/view', methods=['GET', 'POST'])
+def view():
+    #find current user logged and return records of that users inputs
+    username = "Brandon"
+    my_array = []
+
+    for item in tool_db.find({'username': username}):
+        my_array.append(item)
+    print(my_array)
+    return str(my_array)
+
+
 if __name__ == '__main__':
     #app.run(debug=True)
     # get port assigned by OS else set it to 5000
