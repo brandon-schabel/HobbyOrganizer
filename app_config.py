@@ -26,3 +26,6 @@ db.authenticate(config['db_user'], config['db_pass'])
 
 tool_db = db[config['tool_db']]
 user_db = db[config['user_db']]
+
+def update_sec_key():
+    return config['sec_key']
