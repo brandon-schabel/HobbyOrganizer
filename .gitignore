@@ -22,3 +22,7 @@
 *.xml
 *.ini
 *.vscode
+__pycache__
+useful_packages.txt
+toolbox
+create_requirements.txt

@@ -1,17 +1,11 @@
 from flask import Response, Flask, jsonify, make_response, url_for, render_template, \
     send_from_directory, request, url_for, redirect
-from urllib.parse import urlparse, urljoin
 from flask_bootstrap import Bootstrap
 from flask_bcrypt import Bcrypt
-from bson import json_util
-from time import sleep, time
 from pymongo import MongoClient
 from datetime import datetime, timedelta
-import json
-from json import dumps
-import sys
-import os
 from forms import ToolLogForm, LoginForm, RegistrationForm
+import os
 from app_config import *
 from flask_login import LoginManager, login_required, login_user
 from User import User
