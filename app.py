@@ -82,6 +82,7 @@ def login():
                 user_obj = User(username)
                 login_user(user_obj)
                 #add flash message 
+                #http://flask.pocoo.org/docs/0.12/patterns/flashing/
 
                 #next = request.args.get('next')
                 # is_safe_url should check if the url is safe for redirects.
@@ -121,14 +122,12 @@ def register():
     error = None
     
     if request.method == 'POST' and form.validate():
-        print('got to here')
         username = form.login_username.data
         email = form.login_email.data
-        print(form.password.data)
         password_hashed = bcrypt.generate_password_hash(form.password.data)
 
         if (user_db.find_one({'email':email})) == None:
-            if (user_db.find_one({'username': username}) == None:
+            if (user_db.find_one({'username': username})) == None:
                 data_to_log = {
                     'username': username,
                     'email': email,
