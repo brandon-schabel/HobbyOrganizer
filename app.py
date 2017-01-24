@@ -1,5 +1,5 @@
 from flask import Response, Flask, jsonify, make_response, url_for, render_template, \
-    send_from_directory, request, url_for, redirect
+    send_from_directory, request, url_for, redirect, flash 
 from flask_bootstrap import Bootstrap
 from flask_bcrypt import Bcrypt
 from pymongo import MongoClient
@@ -10,6 +10,7 @@ from app_config import *
 from flask_login import LoginManager, login_required, login_user
 from User import User
 #https://flask-login.readthedocs.io/en/latest/#installation
+#understanding url_for https://www.youtube.com/watch?v=Ofy_jRHE3no
 
 app = Flask(__name__)
 Bootstrap(app)
@@ -63,28 +64,26 @@ def login():
     form = LoginForm(request.form)
 
     if request.method == 'POST' and form.validate():
+
+        #form data loader
         form_email = form.login_email.data
         form_password = form.password.data
 
-        print(user_db.find_one({'email':form_email}))
-        #user_email = (user_db.find_one({'email':email}))['email']
+        #DB user loader
         user = user_db.find_one({'email':form_email})
         user_email = user['email']
         user_pass = user['password']
         username = user['username']
 
-        print(user_email)
-        print(form_email)
-        print(user_pass)
-        print(form_password)
-
-        if(user_email == form_email):
+        #if form email is equal to the email from the database
+        if(form_email == user_email):
+            #if password from database is the same as the form password
             if(bcrypt.check_password_hash(user_pass, form_password)):
                 user_obj = User(username)
                 login_user(user_obj)
                 #add flash message 
-                print('my balls')
-                next = request.args.get('next')
+
+                #next = request.args.get('next')
                 # is_safe_url should check if the url is safe for redirects.
                 # See http://flask.pocoo.org/snippets/62/ for an example.
                 '''
@@ -119,6 +118,7 @@ def logout():
 def register():
     user_db = db['user-database']
     form = RegistrationForm(request.form)
+    error = None
     
     if request.method == 'POST' and form.validate():
         print('got to here')
@@ -127,17 +127,25 @@ def register():
         print(form.password.data)
         password_hashed = bcrypt.generate_password_hash(form.password.data)
 
-        data_to_log = {
-                'username': username,
-                'email': email,
-                'password': password_hashed
-        }
+        if (user_db.find_one({'email':email})) == None:
+            if (user_db.find_one({'username': username}) == None:
+                data_to_log = {
+                    'username': username,
+                    'email': email,
+                    'password': password_hashed
+                }
+                user_db.insert(data_to_log)
+                flash('You were successfully registered!')
+                return url_for('index')
+            else:
+                error = "Username taken"
+        else:
+            error = "Email already in use"
         
-        user_db.insert(data_to_log)
     else:
         print(str(form.validate()))
         
-    return render_template('register.html', form=form)
+    return render_template('register.html', form=form,error = error)
 
 @app.route('/view', methods=['GET', 'POST'])
 @login_required
