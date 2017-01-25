@@ -146,12 +146,12 @@ def register():
 def view():
     #find current user logged and return records of that users inputs
     username = "Brandon"
-    my_array = []
+    user_items = []
 
     for item in tool_db.find({'username': username}):
-        my_array.append(item)
-    print(my_array)
-    return str(my_array)
+        user_items.append(item)
+    print(user_items)
+    return render_template('view.html', user_items = user_items)
 
 
 if __name__ == '__main__':

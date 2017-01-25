@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+{% block body %}
+    <head>
+    </head>
+    <body>
+        
+        <ul>
+            {% for item in user_items %}
+                <p>--------------------------------</p>
+                <li>{{item.name}}</li>
+                <ul>
+                {% for tag in item.tags %}
+                    <li>{{tag}}</li>
+                {% endfor %}
+                </ul>
+
+                <li>{{item.bin_number}}</li>
+                <li>{{ item.drawer_number}}</li>
+                <li>{{ item.comment}}</li>
+                <p>--------------------------------</p>
+            {% endfor %}
+        </ul>
+        
+    </body>
+{% endblock %}
