@@ -17,21 +17,19 @@ Bootstrap(app)
 bcrypt = Bcrypt(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
+login_manager.loging_view = 'login'
 app.config.update(SECRET_KEY= update_sec_key())
 
 @login_manager.user_loader
 def load_user(username):  
-    u = user_db.find_one({"_id": username})
+    u = user_db.find_one({"username": username})
     if not u:
         return None
-    return User(u['_id'])
-
-@login_manager.user_loader
-def load_user(user_id):
-    return User.get(user_id)
+    
+    return User(u['username'])
 
 @app.route('/', methods=['GET', 'POST'])
-def hello_world():
+def index():
     print(str(app.open_session(request)))
     form = ToolLogForm(request.form)
     
@@ -61,6 +59,7 @@ def hello_world():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    error = None
     form = LoginForm(request.form)
 
     if request.method == 'POST' and form.validate():
@@ -79,8 +78,10 @@ def login():
         if(form_email == user_email):
             #if password from database is the same as the form password
             if(bcrypt.check_password_hash(user_pass, form_password)):
-                user_obj = User(username)
+                user_obj = User(user['username'])
                 login_user(user_obj)
+                flash('You were successfully logged in')
+                return redirect(url_for('view'))
                 #add flash message 
                 #http://flask.pocoo.org/docs/0.12/patterns/flashing/
 
@@ -91,18 +92,12 @@ def login():
                 if not is_safe_url(next):
                     return flask.abort(400)
                 '''
-                return '<h1> Yolo Swag </h1>' #render_template('index.html')
+                return render #render_template('index.html')
             else:
-                print('didn\'t work')
+                error = "Invalid email or password."
         print(user_email)
-        '''
-        if(user_db.find_one({'email'}) == ):
-            user = user_db.find({'email':email})
-            print(user)
 
-            print('Found')
-        '''
-    return render_template('login.html', form=form)
+    return render_template('login.html', form=form, error = error)
 
 @app.route("/settings")
 @login_required
@@ -135,7 +130,7 @@ def register():
                 }
                 user_db.insert(data_to_log)
                 flash('You were successfully registered!')
-                return url_for('index')
+                return redirect(url_for('index'))
             else:
                 error = "Username taken"
         else:
