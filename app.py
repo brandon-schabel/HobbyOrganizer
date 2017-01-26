@@ -1,5 +1,5 @@
 from flask import Response, Flask, jsonify, make_response, url_for, render_template, \
-    send_from_directory, request, url_for, redirect, flash 
+    send_from_directory, request, url_for, redirect, flash
 from flask_bootstrap import Bootstrap
 from flask_bcrypt import Bcrypt
 from pymongo import MongoClient
@@ -9,6 +9,7 @@ import os
 from app_config import *
 from flask_login import LoginManager, login_required, login_user
 from User import User
+from bson.objectid import ObjectId
 #https://flask-login.readthedocs.io/en/latest/#installation
 #understanding url_for https://www.youtube.com/watch?v=Ofy_jRHE3no
 
@@ -152,6 +153,26 @@ def view():
         user_items.append(item)
     print(user_items)
     return render_template('view.html', user_items = user_items)
+
+@app.route('/delete/<_id>', methods=['GET', 'POST'])
+@login_required
+def delete(_id):
+    #if request.method == 'POST':
+        #print(request.form)
+        #print(tool_db.find_one({'_id': str(_id)}))
+        #tool_db.remove({"_id": str(_id)})
+    #print(tool_db.find_one({'_id': _id}))
+    delete_from_db(_id)
+    return redirect(url_for('view'))
+
+
+def delete_from_db(_id):
+    print(_id)
+    print(str(_id))
+    print(tool_db.find_one({"_id": ObjectId(_id)}))
+    tool_db.remove({"_id": ObjectId(_id)})
+    print("deleted %s" % (_id))
+    #return "deleted %s" % (_id)
 
 
 if __name__ == '__main__':
