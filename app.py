@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 from forms import ToolLogForm, LoginForm, RegistrationForm
 import os
 from app_config import *
-from flask_login import LoginManager, login_required, login_user, current_user
+from flask_login import LoginManager, login_required, login_user, current_user,logout_user
 from User import User
 from bson.objectid import ObjectId
 #https://flask-login.readthedocs.io/en/latest/#installation
@@ -56,6 +56,55 @@ def index():
 
         tool_db.insert(data_to_log)
     return render_template('index.html',form=form)
+
+@app.route('/edit/<_id>', methods=['GET', 'POST'])
+def edit(_id):
+    print(tool_db.find_one({"_id": ObjectId(_id)}))
+    print(str(app.open_session(request)))
+    form = ToolLogForm(request.form)
+    data = tool_db.find_one({"_id": ObjectId(_id)})
+
+    old_name = data['name']
+    old_drawer_number = data['drawer_number']
+    old_bin_number = data['bin_number']
+    old_comment = data['comment']
+    old_tags = data['tags']
+    old_tags = " ".join(old_tags)
+
+    if request.method == 'GET':
+        form.name.data = old_name
+        form.bin_number.data = old_drawer_number
+        form.drawer_number.data = old_bin_number
+        form.comment.data = old_comment
+        form.tags.data = old_tags
+
+    if request.method == 'POST' and form.validate():
+        update_id = ObjectId(data['_id'])
+        print(update_id)
+
+        name = form.name.data
+        bin_number = form.bin_number.data
+        drawer_number = form.drawer_number.data
+        comment = form.comment.data
+        tags = form.tags.data
+        tags = tags.split(" ")
+        current_date_time = datetime.utcnow()
+        
+        
+        data_to_log = {
+            'name':name,
+            'bin_number': bin_number,
+            'drawer_number': drawer_number,
+            'comment': comment,
+            'tags': tags,
+            'current_date_time': current_date_time,
+        }
+
+        
+        tool_db.update_one({'_id': update_id}, {"$set": data_to_log})
+        return redirect(url_for('index'))
+
+    return render_template('edit.html',form=form, data=data)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -109,7 +158,7 @@ def settings():
 @login_required
 def logout():
     logout_user()
-    return redirect(somewhere)
+    return redirect(url_for('index'))
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
