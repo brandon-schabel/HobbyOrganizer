@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 from forms import ToolLogForm, LoginForm, RegistrationForm
 import os
 from app_config import *
-from flask_login import LoginManager, login_required, login_user
+from flask_login import LoginManager, login_required, login_user, current_user
 from User import User
 from bson.objectid import ObjectId
 #https://flask-login.readthedocs.io/en/latest/#installation
@@ -40,7 +40,7 @@ def index():
         drawer_number = form.drawer_number.data
         comment = form.comment.data
         tags = form.tags.data
-        username = form.username.data
+        username = current_user.get_id()
         current_date_time = datetime.utcnow()
         tags = tags.split(" ")
         
@@ -145,6 +145,7 @@ def register():
 @app.route('/view', methods=['GET', 'POST'])
 @login_required
 def view():
+
     #find current user logged and return records of that users inputs
     username = "Brandon"
     user_items = []

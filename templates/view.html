@@ -3,7 +3,7 @@
     <head>
     </head>
     <body>
-        
+        <p>Hello, {{ current_user.get_id() }}</p>
         <ul>
             {% for item in user_items %}
                 <p>--------------------------------</p>
@@ -17,9 +17,7 @@
                 <li>{{item.bin_number}}</li>
                 <li>{{ item.drawer_number}}</li>
                 <li>{{ item.comment}}</li>
-                <li>{{ item._id }} </li>
 
-                <a href="{{ url_for('delete', _id=item._id)}}">DELETE</a>
                 <form action="{{ url_for('delete',_id=item._id) }}" method="POST">
                     <input type="submit" value="Delete Item" />
                 </form>

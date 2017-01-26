@@ -6,7 +6,6 @@ class ToolLogForm(Form):
     drawer_number = IntegerField(u'Drawer', validators=[validators.input_required()])
     comment = StringField(u'Comment', validators=[])
     tags = StringField(u'Tags', validators=[])
-    username = StringField(u'User', validators=[])
 
 class LoginForm(Form):
     login_email = StringField(u'Email',validators=[])
