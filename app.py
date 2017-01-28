@@ -2,9 +2,9 @@ from flask import Response, Flask, jsonify, make_response, url_for, render_templ
     send_from_directory, request, url_for, redirect, flash
 from flask_bootstrap import Bootstrap
 from flask_bcrypt import Bcrypt
-from pymongo import MongoClient
+from pymongo import MongoClient, DESCENDING, IndexModel, TEXT
 from datetime import datetime, timedelta
-from forms import ToolLogForm, LoginForm, RegistrationForm
+from forms import ToolLogForm, LoginForm, RegistrationForm, SearchForm
 import os
 from app_config import *
 from flask_login import LoginManager, login_required, login_user, current_user,logout_user
@@ -56,6 +56,39 @@ def index():
 
         tool_db.insert(data_to_log)
     return render_template('index.html',form=form)
+
+@login_required
+@app.route('/viewsearch/<data>')
+def viewsearch(data):
+    data = data
+    print(data)
+
+    return render_template('viewsearch.html', data=data)
+
+@login_required
+@app.route('/search', methods=['GET','POST'])
+def search():
+    form = SearchForm(request.form)
+    if request.method == 'POST' and form.validate():
+        name_query = form.name.data
+        data = "No Data"
+
+        data = search_db(name_query)
+        print(data)
+
+        return redirect(url_for('viewsearch', data=data))
+    return render_template('search.html',form=form)
+
+
+def search_db(name_query):
+    #name_query = name_query.split(" ")
+    result = []
+    #for word in name_query:
+    tool_db.create_index([('name',TEXT)])
+    for document in tool_db.find( { '$text': { '$search': name_query}, 'username':current_user.get_id() } ):
+        result.append(document)
+    print(result)
+    return result
 
 @app.route('/edit/<_id>', methods=['GET', 'POST'])
 def edit(_id):

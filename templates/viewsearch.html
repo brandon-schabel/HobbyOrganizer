@@ -1,0 +1,11 @@
+{% extends "layout.html" %}
+{% block body %}
+    <head>
+    </head>
+    <body>
+        <p>Hello, {{ current_user.get_id() }}</p>
+        <p>
+        {{ data }}
+        </p>
+    </body>
+{% endblock %}

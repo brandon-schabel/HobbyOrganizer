@@ -18,3 +18,6 @@ class RegistrationForm(Form):
     password = PasswordField(u'Password', validators=[validators.input_required()])#, validators.EqualTo('confirm_pass', message='Passwords must match')
     confirm_pass = PasswordField(u'Repeat Password')
     #accept_tos = BooleanField(u'I accept the TOS', [validators.DataRequired()])
+
+class SearchForm(Form):
+    name = StringField(u'Search Item Name', validators=[validators.input_required()])
