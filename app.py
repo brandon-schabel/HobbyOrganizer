@@ -253,7 +253,7 @@ def delete_from_db(_id):
     print(_id)
     print(str(_id))
     print(tool_db.find_one({"_id": ObjectId(_id)}))
-    tool_db.remove({"_id": ObjectId(_id)})
+    tool_db.remove({"_id": ObjectId(_id), "username":current_user.get_id() })
     print("deleted %s" % (_id))
     #return "deleted %s" % (_id)
 
