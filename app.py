@@ -31,6 +31,11 @@ def load_user(username):
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    return render_template('index.html')
+
+@login_required
+@app.route('/add_item', methods=['GET', 'POST'])
+def add_item():
     print(str(app.open_session(request)))
     form = ToolLogForm(request.form)
     
@@ -42,6 +47,7 @@ def index():
         tags = form.tags.data
         username = current_user.get_id()
         created_date_time = datetime.utcnow()
+        modified_date_time = datetime.utcnow()
         tags = tags.split(" ")
         
         data_to_log = {
@@ -51,11 +57,13 @@ def index():
             'comment': comment,
             'tags': tags,
             'username': username,
-            'created_date_time': created_date_time
+            'created_date_time': created_date_time,
+            'modified_date_time': modified_date_time
+            
         }
 
         hobby_coll.insert(data_to_log)
-    return render_template('index.html',form=form)
+    return render_template('add_item.html',form=form)
 
 @login_required
 @app.route('/viewsearch/<data>')

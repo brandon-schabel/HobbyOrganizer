@@ -1,14 +1,8 @@
 {% extends "layout.html" %}
 {% block body %}
-{% from "_formhelpers.html" import render_field %}
-<form method=post>
-  <dl>
-    {{ render_field(form.name) }}
-    {{ render_field(form.bin_number) }}
-    {{ render_field(form.drawer_number) }}
-	  {{ render_field(form.comment) }}
-	  {{ render_field(form.tags) }}
-  </dl>
-  <p><input type=submit value=Submit>
-</form>
+{% if  current_user.is_authenticated %}
+  Welcome, {{current_user.get_id() }}!
+{% else %}
+  <p>Please sign in <a href="{{url_for('login')}}">here</a> or register <a href="{{url_for('register')}}">here</a> </p>
+{% endif %}
 {% endblock %}
