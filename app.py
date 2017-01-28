@@ -41,7 +41,7 @@ def index():
         comment = form.comment.data
         tags = form.tags.data
         username = current_user.get_id()
-        current_date_time = datetime.utcnow()
+        created_date_time = datetime.utcnow()
         tags = tags.split(" ")
         
         data_to_log = {
@@ -51,7 +51,7 @@ def index():
             'comment': comment,
             'tags': tags,
             'username': username,
-            'current_date_time': current_date_time
+            'created_date_time': created_date_time
         }
 
         hobby_coll.insert(data_to_log)
@@ -121,7 +121,7 @@ def edit(_id):
         comment = form.comment.data
         tags = form.tags.data
         tags = tags.split(" ")
-        current_date_time = datetime.utcnow()
+        modified_date_time = datetime.utcnow()
         
         
         data_to_log = {
@@ -130,7 +130,7 @@ def edit(_id):
             'drawer_number': drawer_number,
             'comment': comment,
             'tags': tags,
-            'current_date_time': current_date_time,
+            'modified_date_time': modified_date_time,
         }
 
         
