@@ -23,7 +23,7 @@ app.config.update(SECRET_KEY= update_sec_key())
 
 @login_manager.user_loader
 def load_user(username):  
-    u = user_db.find_one({"username": username})
+    u = user_coll.find_one({"username": username})
     if not u:
         return None
     
@@ -54,7 +54,7 @@ def index():
             'current_date_time': current_date_time
         }
 
-        tool_db.insert(data_to_log)
+        hobby_coll.insert(data_to_log)
     return render_template('index.html',form=form)
 
 @login_required
@@ -84,18 +84,18 @@ def search_db(name_query):
     #name_query = name_query.split(" ")
     result = []
     #for word in name_query:
-    tool_db.create_index([('name',TEXT)])
-    for document in tool_db.find( { '$text': { '$search': name_query}, 'username':current_user.get_id() } ):
+    hobby_coll.create_index([('name',TEXT)])
+    for document in hobby_coll.find( { '$text': { '$search': name_query}, 'username':current_user.get_id() } ):
         result.append(document)
     print(result)
     return result
 
 @app.route('/edit/<_id>', methods=['GET', 'POST'])
 def edit(_id):
-    print(tool_db.find_one({"_id": ObjectId(_id)}))
+    print(hobby_coll.find_one({"_id": ObjectId(_id)}))
     print(str(app.open_session(request)))
     form = ToolLogForm(request.form)
-    data = tool_db.find_one({"_id": ObjectId(_id)})
+    data = hobby_coll.find_one({"_id": ObjectId(_id)})
 
     old_name = data['name']
     old_drawer_number = data['drawer_number']
@@ -134,7 +134,7 @@ def edit(_id):
         }
 
         
-        tool_db.update_one({'_id': update_id}, {"$set": data_to_log})
+        hobby_coll.update_one({'_id': update_id}, {"$set": data_to_log})
         return redirect(url_for('index'))
 
     return render_template('edit.html',form=form, data=data)
@@ -152,7 +152,7 @@ def login():
         form_password = form.password.data
 
         #DB user loader
-        user = user_db.find_one({'email':form_email})
+        user = user_coll.find_one({'email':form_email})
         user_email = user['email']
         user_pass = user['password']
         username = user['username']
@@ -195,7 +195,7 @@ def logout():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    user_db = db['user-database']
+    user_coll = db['user-database']
     form = RegistrationForm(request.form)
     error = None
     
@@ -204,14 +204,14 @@ def register():
         email = form.login_email.data
         password_hashed = bcrypt.generate_password_hash(form.password.data)
 
-        if (user_db.find_one({'email':email})) == None:
-            if (user_db.find_one({'username': username})) == None:
+        if (user_coll.find_one({'email':email})) == None:
+            if (user_coll.find_one({'username': username})) == None:
                 data_to_log = {
                     'username': username,
                     'email': email,
                     'password': password_hashed
                 }
-                user_db.insert(data_to_log)
+                user_coll.insert(data_to_log)
                 flash('You were successfully registered!')
                 return redirect(url_for('index'))
             else:
@@ -232,7 +232,7 @@ def view():
     username = "Brandon"
     user_items = []
 
-    for item in tool_db.find({'username': username}):
+    for item in hobby_coll.find({'username': username}):
         user_items.append(item)
     print(user_items)
     return render_template('view.html', user_items = user_items)
@@ -242,9 +242,9 @@ def view():
 def delete(_id):
     #if request.method == 'POST':
         #print(request.form)
-        #print(tool_db.find_one({'_id': str(_id)}))
-        #tool_db.remove({"_id": str(_id)})
-    #print(tool_db.find_one({'_id': _id}))
+        #print(hobby_coll.find_one({'_id': str(_id)}))
+        #hobby_coll.remove({"_id": str(_id)})
+    #print(hobby_coll.find_one({'_id': _id}))
     delete_from_db(_id)
     return redirect(url_for('view'))
 
@@ -252,8 +252,8 @@ def delete(_id):
 def delete_from_db(_id):
     print(_id)
     print(str(_id))
-    print(tool_db.find_one({"_id": ObjectId(_id)}))
-    tool_db.remove({"_id": ObjectId(_id), "username":current_user.get_id() })
+    print(hobby_coll.find_one({"_id": ObjectId(_id)}))
+    hobby_coll.remove({"_id": ObjectId(_id), "username":current_user.get_id() })
     print("deleted %s" % (_id))
     #return "deleted %s" % (_id)
 

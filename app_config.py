@@ -19,13 +19,13 @@ def ConfigSectionMap(section):
 
 config = ConfigSectionMap('database_config')
 
-client = MongoClient(config['client_url'], int(config['client_port']))
+client = MongoClient(config['server_url'], int(config['server_port']))
 # connecting to our mlab database
-db = client[config['db_client_name']]
+db = client[config['db_server_name']]
 db.authenticate(config['db_user'], config['db_pass'])
 
-tool_db = db[config['tool_db']]
-user_db = db[config['user_db']]
+hobby_coll = db[config['hobby_coll']]
+user_coll = db[config['user_coll']]
 
 def update_sec_key():
     return config['sec_key']
