@@ -71,16 +71,6 @@ def search_db(name_query):
         result.append(document)
     print(result)
     return result
-    
-
-
-
-
-
-
-
-
-
 
 '''
 Routes
@@ -88,7 +78,10 @@ Routes
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    user_items = get_items()
+    if current_user.is_authenticated:
+        user_items = get_items()
+    else:
+        user_items = None
     return render_template('index.html', user_items =user_items)
 
 @login_required
@@ -124,17 +117,16 @@ def add_item():
         return redirect(url_for('add_item'))
     return render_template('add_item.html',form=form)
 
+@app.route("/logout")
 @login_required
-@app.route('/viewsearch/<data>')
-def viewsearch(data):
-    data = data
-    print(data)
-
-    return render_template('viewsearch.html', data=data)
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
 
 @login_required
 @app.route('/search', methods=['GET','POST'])
 def search():
+    data = None
     form = SearchForm(request.form)
     if request.method == 'POST' and form.validate():
         name_query = form.name.data
@@ -143,7 +135,7 @@ def search():
         data = search_db(name_query)
         print(data)
 
-        return redirect(url_for('viewsearch', data=data))
+        return render_template('search.html', data=data, form=form)
     return render_template('search.html',form=form)
 
 @app.route('/edit/<_id>', methods=['GET', 'POST'])
@@ -238,8 +230,6 @@ def login():
         else:
             error = "Invalid email or password"
 
-        
-
     return render_template('login.html', form=form, error = error)
 
 @app.route("/settings")
@@ -256,11 +246,8 @@ def admin():
         flash('VERFICATION FAILED: You are not an administrator.')
         return redirect(url_for('index'))
 
-@app.route("/logout")
-@login_required
-def logout():
-    logout_user()
-    return redirect(url_for('index'))
+
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():

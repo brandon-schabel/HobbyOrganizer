@@ -3,6 +3,8 @@
 {% block body %}
     {%block content%}
     {%endblock content%}
+
+    {% if current_user.is_authenticated %}
     <div class="container">
         <h1>User Items</h1>
         <ul>
@@ -33,4 +35,6 @@
             {% endfor %}
         </ul>
     </div>
+    {% endif  %}
+
 {% endblock body %}
