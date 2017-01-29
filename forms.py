@@ -8,15 +8,15 @@ class ToolLogForm(Form):
     tags = StringField(u'Tags', validators=[])
 
 class LoginForm(Form):
-    login_email = StringField(u'Email',validators=[])
-    password = PasswordField(u'Password', validators=[])
+    login_email = StringField(u'Email',validators=[validators.input_required()])
+    password = PasswordField(u'Password', validators=[validators.input_required()])
 
 class RegistrationForm(Form):
     login_username = StringField (u'Username', validators=[validators.input_required()])
     login_email = StringField (u'Email', validators=[validators.input_required()])#validators.Email(), validators.EqualTo('confirm_email', message='Emails must match')
-    confirm_email = StringField(u'Repeat Email')
+    confirm_email = StringField(u'Repeat Email', [validators.input_required()])
     password = PasswordField(u'Password', validators=[validators.input_required()])#, validators.EqualTo('confirm_pass', message='Passwords must match')
-    confirm_pass = PasswordField(u'Repeat Password')
+    confirm_pass = PasswordField(u'Repeat Password',validators=[validators.input_required()])
     #accept_tos = BooleanField(u'I accept the TOS', [validators.DataRequired()])
 
 class SearchForm(Form):

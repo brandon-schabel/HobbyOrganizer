@@ -227,9 +227,6 @@ def register():
         else:
             error = "Email already in use"
         
-    else:
-        print(str(form.validate()))
-        
     return render_template('register.html', form=form,error = error)
 
 @app.route('/view', methods=['GET', 'POST'])
@@ -243,6 +240,9 @@ def view():
     for item in hobby_coll.find({'username': username}):
         user_items.append(item)
     print(user_items)
+
+    tags = ""
+
     return render_template('view.html', user_items = user_items)
 
 @app.route('/delete/<_id>', methods=['GET', 'POST'])
