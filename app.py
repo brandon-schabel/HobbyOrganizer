@@ -14,12 +14,44 @@ from bson.objectid import ObjectId
 #understanding url_for https://www.youtube.com/watch?v=Ofy_jRHE3no
 
 app = Flask(__name__)
-Bootstrap(app)
-bcrypt = Bcrypt(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.loging_view = 'login'
+Bootstrap(app)
+bcrypt = Bcrypt(app)
+
 app.config.update(SECRET_KEY= update_sec_key())
+
+'''
+Defs
+'''
+def check_admin(user):
+    admins = ["Brandon"]
+    #create a for loop that iterates through 
+    for admin in admins:
+        if admin == user:
+            return True
+    return False
+
+def delete_from_db(_id):
+    print(_id)
+    print(str(_id))
+    print(hobby_coll.find_one({"_id": ObjectId(_id)}))
+    hobby_coll.remove({"_id": ObjectId(_id), "username":current_user.get_id() })
+    print("deleted %s" % (_id))
+    #return "deleted %s" % (_id)
+
+@login_required
+def get_items():
+    username = current_user.get_id()
+    user_items = []
+
+    for item in hobby_coll.find({'username': username}):
+        user_items.append(item)
+    print(user_items)
+
+    tags = ""
+    return user_items
 
 @login_manager.user_loader
 def load_user(username):  
@@ -29,9 +61,35 @@ def load_user(username):
     
     return User(u['username'])
 
+@login_required
+def search_db(name_query):
+    #name_query = name_query.split(" ")
+    result = []
+    #for word in name_query:
+    hobby_coll.create_index([('name',TEXT)])
+    for document in hobby_coll.find( { '$text': { '$search': name_query}, 'username':current_user.get_id() } ):
+        result.append(document)
+    print(result)
+    return result
+    
+
+
+
+
+
+
+
+
+
+
+'''
+Routes
+'''
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    return render_template('index.html')
+    user_items = get_items()
+    return render_template('index.html', user_items =user_items)
 
 @login_required
 @app.route('/add_item', methods=['GET', 'POST'])
@@ -87,17 +145,6 @@ def search():
 
         return redirect(url_for('viewsearch', data=data))
     return render_template('search.html',form=form)
-
-
-def search_db(name_query):
-    #name_query = name_query.split(" ")
-    result = []
-    #for word in name_query:
-    hobby_coll.create_index([('name',TEXT)])
-    for document in hobby_coll.find( { '$text': { '$search': name_query}, 'username':current_user.get_id() } ):
-        result.append(document)
-    print(result)
-    return result
 
 @app.route('/edit/<_id>', methods=['GET', 'POST'])
 def edit(_id):
@@ -209,14 +256,6 @@ def admin():
         flash('VERFICATION FAILED: You are not an administrator.')
         return redirect(url_for('index'))
 
-def check_admin(user):
-    admins = ["Brandon"]
-    #create a for loop that iterates through 
-    for admin in admins:
-        if admin == user:
-            return True
-    return False
-
 @app.route("/logout")
 @login_required
 def logout():
@@ -270,23 +309,8 @@ def view():
 @app.route('/delete/<_id>', methods=['GET', 'POST'])
 @login_required
 def delete(_id):
-    #if request.method == 'POST':
-        #print(request.form)
-        #print(hobby_coll.find_one({'_id': str(_id)}))
-        #hobby_coll.remove({"_id": str(_id)})
-    #print(hobby_coll.find_one({'_id': _id}))
     delete_from_db(_id)
     return redirect(url_for('view'))
-
-
-def delete_from_db(_id):
-    print(_id)
-    print(str(_id))
-    print(hobby_coll.find_one({"_id": ObjectId(_id)}))
-    hobby_coll.remove({"_id": ObjectId(_id), "username":current_user.get_id() })
-    print("deleted %s" % (_id))
-    #return "deleted %s" % (_id)
-
 
 if __name__ == '__main__':
     #app.run(debug=True)

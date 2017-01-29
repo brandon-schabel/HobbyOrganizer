@@ -1,13 +1,17 @@
-{% extends "layout.html" %}
+{% extends "view_module.html" %}
 
 {% block content %}
 
   <div class="container">
-    <h1>Home</h1>
-    {% if  current_user.is_authenticated %}
-      Welcome, {{current_user.get_id() }}!
-    {% else %}
-      <p>Please sign in <a href="{{url_for('login')}}">here</a> or register <a href="{{url_for('register')}}">here</a>. </p>
-    {% endif %}
+    <div class="row">
+      <div class="col-xs-6">
+        <h1>Home</h1>
+        {% if  current_user.is_authenticated %}
+          Welcome, {{current_user.get_id() }}!
+        {% else %}
+          <p>Please sign in <a href="{{url_for('login')}}">here</a> or register <a href="{{url_for('register')}}">here</a>. </p>
+        {% endif %}
+      </div>
+    </div>
   </div>
-{% endblock %}
+{% endblock %} 
