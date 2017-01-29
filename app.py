@@ -63,6 +63,7 @@ def add_item():
         }
 
         hobby_coll.insert(data_to_log)
+        return redirect(url_for('add_item'))
     return render_template('add_item.html',form=form)
 
 @login_required
@@ -255,7 +256,7 @@ def register():
 def view():
 
     #find current user logged and return records of that users inputs
-    username = "Brandon"
+    username = current_user.get_id()
     user_items = []
 
     for item in hobby_coll.find({'username': username}):
