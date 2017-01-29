@@ -22,3 +22,24 @@ hobby_coll: the collection you'll be storing your hobby entries
 user_coll: the collection you'll be storing users
 
 sec_key: set as a string to whatever you want
+
+Here is an example config.ini
+;https://wiki.python.org/moin/ConfigParserExamples
+
+[database_config]
+
+server_url: ds1000000101.mlab.com
+
+server_port: 10000
+
+db_server_name: hobby_organizer
+
+db_user: admin
+
+db_pass: admin
+
+hobby_coll: hobby_coll
+
+user_coll: user_coll
+
+sec_key: 'whatever_you_want_it_to_be_123456789'
