@@ -160,33 +160,37 @@ def login():
         form_password = form.password.data
 
         #DB user loader
-        user = user_coll.find_one({'email':form_email})
-        user_email = user['email']
-        user_pass = user['password']
-        username = user['username']
+        if(user_coll.find_one({'email':form_email})):   
+            user = user_coll.find_one({'email':form_email})
+            user_email = user['email']
+            user_pass = user['password']
+            username = user['username']
+            #if form email is equal to the email from the database
+            if(form_email == user_email):
+                #if password from database is the same as the form password
+                if(bcrypt.check_password_hash(user_pass, form_password)):
+                    user_obj = User(user['username'])
+                    login_user(user_obj)
+                    flash('You were successfully logged in')
+                    return redirect(url_for('view'))
+                    #add flash message 
+                    #http://flask.pocoo.org/docs/0.12/patterns/flashing/
 
-        #if form email is equal to the email from the database
-        if(form_email == user_email):
-            #if password from database is the same as the form password
-            if(bcrypt.check_password_hash(user_pass, form_password)):
-                user_obj = User(user['username'])
-                login_user(user_obj)
-                flash('You were successfully logged in')
-                return redirect(url_for('view'))
-                #add flash message 
-                #http://flask.pocoo.org/docs/0.12/patterns/flashing/
+                    #next = request.args.get('next')
+                    # is_safe_url should check if the url is safe for redirects.
+                    # See http://flask.pocoo.org/snippets/62/ for an example.
+                    '''
+                    if not is_safe_url(next):
+                        return flask.abort(400)
+                    '''
+                    #return render #render_template('index.html')
+                else:
+                    error = "Invalid email or password."
+            print(user_email)
+        else:
+            error = "Invalid email or password"
 
-                #next = request.args.get('next')
-                # is_safe_url should check if the url is safe for redirects.
-                # See http://flask.pocoo.org/snippets/62/ for an example.
-                '''
-                if not is_safe_url(next):
-                    return flask.abort(400)
-                '''
-                return render #render_template('index.html')
-            else:
-                error = "Invalid email or password."
-        print(user_email)
+        
 
     return render_template('login.html', form=form, error = error)
 
@@ -194,6 +198,23 @@ def login():
 @login_required
 def settings():
     pass
+
+@app.route("/admin")
+@login_required
+def admin():
+    if check_admin(current_user.get_id()):
+        return render_template('admin.html')
+    else:
+        flash('VERFICATION FAILED: You are not an administrator.')
+        return redirect(url_for('index'))
+
+def check_admin(user):
+    admins = ["Brandon"]
+    #create a for loop that iterates through 
+    for admin in admins:
+        if admin == user:
+            return True
+    return False
 
 @app.route("/logout")
 @login_required
