@@ -1,32 +1,32 @@
 {% extends "layout.html" %}
-{% block body %}
-    <head>
-    </head>
-    <body>
-        <p>Hello, {{ current_user.get_id() }}</p>
+{% block content %}
+
+<div class="container">
+    <h1>View</h1>
+        <p>User: {{ current_user.get_id() }}</p>
         <ul>
-            {% for item in user_items %}
-                <p>--------------------------------</p>
-                <li>{{item.name}}</li>
-                <ul>
-                {% for tag in item.tags %}
-                    <li>{{tag}}</li>
-                {% endfor %}
-                </ul>
-
-                <li>{{item.bin_number}}</li>
-                <li>{{ item.drawer_number}}</li>
-                <li>{{ item.comment}}</li>
-
-                <form action="{{ url_for('delete',_id=item._id) }}" method="POST">
-                    <input type="submit" value="Delete Item" />
-                </form>
-                <form action="{{ url_for('edit',_id=item._id) }}" method="GET">
-                    <input type="submit" value="Edit Item" />
-                </form>
-                <p>--------------------------------</p>
+        {% for item in user_items %}
+            <p>--------------------------------</p>
+            <li>{{item.name}}</li>
+            <ul>
+            {% for tag in item.tags %}
+                <li>{{tag}}</li>
             {% endfor %}
-        </ul>
-        
-    </body>
+            </ul>
+
+            <li>{{item.bin_number}}</li>
+            <li>{{ item.drawer_number}}</li>
+            <li>{{ item.comment}}</li>
+
+            <form action="{{ url_for('delete',_id=item._id) }}" method="POST">
+                <input type="submit" value="Delete Item" />
+            </form>
+            <form action="{{ url_for('edit',_id=item._id) }}" method="GET">
+                <input type="submit" value="Edit Item" />
+            </form>
+            <p>--------------------------------</p>
+        {% endfor %}
+    </ul>
+</div>
+
 {% endblock %}

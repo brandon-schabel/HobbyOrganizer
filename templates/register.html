@@ -1,19 +1,22 @@
 {% extends "layout.html" %}
-{% block body %}
-  <h1> Register </h1>
-  {% if error %}
-   <p class=error><strong>Error:</strong> {{ error }}
-  {% endif %}
-  
-  {% from "_formhelpers.html" import render_field %}
-  <form method=post>
-    <dl>
-      {{ render_field(form.login_username) }}
-      {{ render_field(form.login_email) }}
-      {{ render_field(form.confirm_email) }}
-      {{ render_field(form.password) }}
-      {{ render_field(form.confirm_pass) }}
-    </dl>
-    <p><input type=submit value=Register>
-  </form>
+
+{% block content %}
+  <div class="container">
+    <h1> Register </h1>
+    {% if error %}
+      <p class=error><strong>Error:</strong> {{ error }}
+    {% endif %}
+
+    {% from "_formhelpers.html" import render_field %}
+    <form method=post>
+      <dl>
+        {{ render_field(form.login_username) }}
+        {{ render_field(form.login_email) }}
+        {{ render_field(form.confirm_email) }}
+        {{ render_field(form.password) }}
+        {{ render_field(form.confirm_pass) }}
+      </dl>
+      <p><input type=submit value=Register>
+    </form>
+  </div>
 {% endblock %}

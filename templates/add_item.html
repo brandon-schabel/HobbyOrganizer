@@ -1,14 +1,17 @@
 {% extends "layout.html" %}
-{% block body %}
-{% from "_formhelpers.html" import render_field %}
-<form method=post>
-  <dl>
-    {{ render_field(form.name) }}
-    {{ render_field(form.bin_number) }}
-    {{ render_field(form.drawer_number) }}
-	  {{ render_field(form.comment) }}
-	  {{ render_field(form.tags) }}
-  </dl>
-  <p><input type=submit value=Submit>
-</form>
+{% block content %}
+  <div class="container">
+    <h1>Add Item</h1>
+    {% from "_formhelpers.html" import render_field %}
+    <form method=post>
+      <dl>
+        {{ render_field(form.name) }}
+        {{ render_field(form.bin_number) }}
+        {{ render_field(form.drawer_number) }}
+        {{ render_field(form.comment) }}
+        {{ render_field(form.tags) }}
+      </dl>
+      <p><input type=submit value=Submit>
+    </form>
+  </div>
 {% endblock %}

@@ -1,16 +1,18 @@
 {% extends "layout.html" %}
-{% block body %}
-<h1> Login </h1>
-  {% if error %}
-   <p class=error><strong>Error:</strong> {{ error }}
-  {% endif %}
-{% from "_formhelpers.html" import render_field %}
-<form method=post>
-  <dl>
-    {{ render_field(form.login_email) }}
-    {{ render_field(form.password) }}
+{% block content %}
+  <div class="container">
+    <h1> Login </h1>
+    {% if error %}
+      <p class=error><strong>Error:</strong> {{ error }}
+    {% endif %}
+    {% from "_formhelpers.html" import render_field %}
+    <form method=post>
+      <dl>
+        {{ render_field(form.login_email) }}
+        {{ render_field(form.password) }}
 
-  </dl>
-  <p><input type=submit value=Login>
-</form>
+      </dl>
+      <p><input type=submit value=Login>
+      </form>
+  </div>
 {% endblock %}

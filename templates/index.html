@@ -1,8 +1,13 @@
 {% extends "layout.html" %}
-{% block body %}
-{% if  current_user.is_authenticated %}
-  Welcome, {{current_user.get_id() }}!
-{% else %}
-  <p>Please sign in <a href="{{url_for('login')}}">here</a> or register <a href="{{url_for('register')}}">here</a> </p>
-{% endif %}
+
+{% block content %}
+
+  <div class="container">
+    <h1>Home</h1>
+    {% if  current_user.is_authenticated %}
+      Welcome, {{current_user.get_id() }}!
+    {% else %}
+      <p>Please sign in <a href="{{url_for('login')}}">here</a> or register <a href="{{url_for('register')}}">here</a>. </p>
+    {% endif %}
+  </div>
 {% endblock %}
