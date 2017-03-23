@@ -1,7 +1,8 @@
 {% extends "layout.html" %}
 
 {% block content %}
-  <div class="container" >
+<div class="container">
+  <div class="row">
     <h1> Register </h1>
     {% if error %}
       <p class=error><strong>Error:</strong> {{ error }}
@@ -18,5 +19,6 @@
       </dl>
       <p><input type=submit value=Register>
     </form>
+    </div>
   </div>
 {% endblock %}

@@ -1,12 +1,13 @@
 {% extends "layout.html" %}
-{% block content %}
 
-    <div class="container">
+{% block content %}
+<div class="container">
+    <div class="row">
         <h1>View</h1>
         <p>User: {{ current_user.get_id() }}</p>
         <ul>
             {% for item in user_items %}
-                <div class="container">
+                <div >
 
                     <div class="row">
                         <div class="col-xs-1">
@@ -32,5 +33,5 @@
             {% endfor %}
         </ul>
     </div>
-
+</div>
 {% endblock %}

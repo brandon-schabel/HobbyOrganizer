@@ -1,7 +1,8 @@
 {% extends "layout.html" %} 
 
 {% block content %}
-  <div class="container">
+<div class="container">
+  <div class="row">
     <h1>Search</h1>
     {% from "_formhelpers.html" import render_field %}
       <form method=post>
@@ -41,4 +42,5 @@
         </ul>
     {% endif %}
   </div>
+</div>
 {% endblock %}
